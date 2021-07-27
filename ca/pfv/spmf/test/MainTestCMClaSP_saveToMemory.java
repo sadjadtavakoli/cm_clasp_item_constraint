@@ -3,6 +3,8 @@ package ca.pfv.spmf.test;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import ca.pfv.spmf.algorithms.sequentialpatterns.clasp_AGP.AlgoCM_ClaSP;
 import ca.pfv.spmf.algorithms.sequentialpatterns.clasp_AGP.dataStructures.creators.AbstractionCreator;
@@ -37,13 +39,14 @@ public class MainTestCMClaSP_saveToMemory {
         
         AbstractionCreator abstractionCreator = AbstractionCreator_Qualitative.getInstance();
         IdListCreator idListCreator = IdListCreatorStandard_Map.getInstance();
+        List<String> itemConstraint = Arrays.asList("6"); // TODO sadjad shouldn't be here! it should be an input to the whole algorithm called from outside :!?
 
-        SequenceDatabase sequenceDatabase = new SequenceDatabase(abstractionCreator, idListCreator);
+        SequenceDatabase sequenceDatabase = new SequenceDatabase(abstractionCreator, idListCreator, itemConstraint);
 
         //double relativeSupport = sequenceDatabase.loadFile(fileToPath("contextClaSP.txt"), support);
         double relativeSupport = sequenceDatabase.loadFile(fileToPath("contextPrefixSpan.txt"), support);
 
-        AlgoCM_ClaSP algorithm = new AlgoCM_ClaSP(relativeSupport, abstractionCreator, findClosedPatterns, executePruningMethods);
+        AlgoCM_ClaSP algorithm = new AlgoCM_ClaSP(relativeSupport, abstractionCreator, findClosedPatterns, executePruningMethods, itemConstraint);
 
 
         //System.out.println(sequenceDatabase.toString());

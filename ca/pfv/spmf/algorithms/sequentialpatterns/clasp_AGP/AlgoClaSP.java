@@ -169,7 +169,7 @@ public class AlgoClaSP {
 
         // Inizialitation of the class that is in charge of find the frequent patterns
         FrequentPatternEnumeration_ClaSP frequentPatternEnumeration = new FrequentPatternEnumeration_ClaSP(
-                abstractionCreator, minSupAbsolute, saver, findClosedPatterns, executePruningMethods);
+                abstractionCreator, minSupAbsolute, saver, findClosedPatterns, executePruningMethods, null);
 
         this.mainMethodStart = System.currentTimeMillis();
         // We dfsPruning the search
@@ -195,7 +195,7 @@ public class AlgoClaSP {
             List<Entry<Pattern, Trie>> outputPatternsFromMainMethod = frequentAtomsTrie.preorderTraversal(null);
 
             this.postProcessingStart = System.currentTimeMillis();
-            frequentPatternEnumeration.removeNonClosedPatterns(outputPatternsFromMainMethod, keepPatterns);
+            frequentPatternEnumeration.removeNonClosedNonItemConstraintPatterns(outputPatternsFromMainMethod, keepPatterns);
             this.postProcessingEnd = System.currentTimeMillis();
             numberOfFrequentClosedPatterns = frequentPatternEnumeration.getFrequentClosedPatterns();
             if (verbose) {

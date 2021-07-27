@@ -96,6 +96,8 @@ public class AlgoCM_ClaSP {
      * through the postprocessing step
      */
     private boolean executePruningMethods;
+
+    private List<String> itemConstraint;
     public long joinCount; // PFV 2013
 
     /**
@@ -106,11 +108,12 @@ public class AlgoCM_ClaSP {
      * @param findClosedPatterns flag to indicate if we are interesting in only
      */
     public AlgoCM_ClaSP(double support, AbstractionCreator abstractionCreator, boolean findClosedPatterns,
-            boolean executePruningMethods) {
+            boolean executePruningMethods, List<String> itemConstraint) {
         this.minSupAbsolute = support;
         this.abstractionCreator = abstractionCreator;
         this.findClosedPatterns = findClosedPatterns;
         this.executePruningMethods = executePruningMethods;
+        this.itemConstraint = itemConstraint;
     }
 
     /**
@@ -187,12 +190,7 @@ public class AlgoCM_ClaSP {
                 for (int j = 0; j < itemsetA.size(); j++) {
                     sequenceLengthTracker+=1;
                     Integer itemA = (Integer) itemsetA.get(j).getId();
-                    // System.out.println(seq.getlastOccurance());
-                    // System.out.println(sequenceLengthTracker);
-                    // System.out.println(itemA);    
-                    // System.out.println("-------");    
                     if(sequenceLengthTracker > seq.getlastOccurance()){
-                        // System.out.println("done");
                         break loopseq;
                     }
                     boolean alreadyDoneForItemA = false;
@@ -275,6 +273,7 @@ public class AlgoCM_ClaSP {
                 }
             }
         }
+        System.out.println("cooc map");
         System.out.println(coocMapAfter);
         System.out.println(coocMapEquals);
 
@@ -319,7 +318,7 @@ public class AlgoCM_ClaSP {
 
         // Inizialitation of the class that is in charge of find the frequent patterns
         FrequentPatternEnumeration_ClaSP frequentPatternEnumeration = new FrequentPatternEnumeration_ClaSP(
-                abstractionCreator, minSupAbsolute, saver, findClosedPatterns, executePruningMethods);
+                abstractionCreator, minSupAbsolute, saver, findClosedPatterns, executePruningMethods, itemConstraint);
 
         this.mainMethodStart = System.currentTimeMillis();
         // We dfsPruning the search
@@ -339,9 +338,11 @@ public class AlgoCM_ClaSP {
         // post-processing step
         if (findClosedPatterns) {
             List<Entry<Pattern, Trie>> outputPatternsFromMainMethod = FrequentAtomsTrie.preorderTraversal(null);
+            System.out.println("patterns before non-closed elimination");
+            System.out.println(outputPatternsFromMainMethod.toString());
 
             this.postProcessingStart = System.currentTimeMillis();
-            frequentPatternEnumeration.removeNonClosedPatterns(outputPatternsFromMainMethod, keepPatterns);
+            frequentPatternEnumeration.removeNonClosedNonItemConstraintPatterns(outputPatternsFromMainMethod, keepPatterns);
             this.postProcessingEnd = System.currentTimeMillis();
             numberOfFrequentClosedPatterns = frequentPatternEnumeration.getFrequentClosedPatterns();
             if (verbose) {

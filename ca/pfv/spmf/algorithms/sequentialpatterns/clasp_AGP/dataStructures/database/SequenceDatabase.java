@@ -54,6 +54,7 @@ public class SequenceDatabase {
     private Map<Item, TrieNode> frequentItems = new HashMap<Item, TrieNode>();
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private ItemFactory<Integer> itemFactory = new ItemFactory<Integer>();
+    private List<String> itemConstraint; 
     private int nSequences = 1;
     /**
      * Map where we keep the original length for all the sequences
@@ -77,9 +78,10 @@ public class SequenceDatabase {
      * @param abstractionCreator
      * @param IdListCreator
      */
-    public SequenceDatabase(AbstractionCreator abstractionCreator, IdListCreator IdListCreator) {
+    public SequenceDatabase(AbstractionCreator abstractionCreator, IdListCreator IdListCreator, List<String> itemConstraint) {
         this.abstractionCreator = abstractionCreator;
         this.idListCreator = IdListCreator;
+        this.itemConstraint = itemConstraint;
     }
 
     /**
@@ -153,7 +155,6 @@ public class SequenceDatabase {
         long timestamp = -1;
         Sequence sequence = new Sequence(sequences.size());
         Itemset itemset = new Itemset();
-        List<String> itemConstraint = Arrays.asList("6"); // TODO sadjad shouldn't be here! it should be an input to the whole algorithm called from outside :!?
         sequence.setID(nSequences);
         int lastOccurance = -1;
         int beginning = 0;
@@ -176,6 +177,9 @@ public class SequenceDatabase {
             } else if (integers[i].equals("-2") && lastOccurance > -1) { // End of a sequence
                 sequence.setLastOccurance(lastOccurance);
                 sequences.add(sequence);
+                System.out.println("sequences and last occurance"); 
+                System.out.println(sequence.toString());
+                System.out.println(lastOccurance);
                 nSequences++;
                 sequencesLengths.put(sequence.getId(), sequence.length());
                 sequenceItemsetSize.put(sequence.getId(), sizeItemsetsList);
@@ -200,7 +204,7 @@ public class SequenceDatabase {
                     }
                     itemset.addItem(item);
                     
-                    if(itemConstraint.contains(integers[i])){
+                    if(this.itemConstraint.contains(integers[i])){
                         lastOccurance = sequence.length() + itemset.size();
                     }
                     idListCreator.addAppearance(idlist, sequence.getId(), (int) timestamp,

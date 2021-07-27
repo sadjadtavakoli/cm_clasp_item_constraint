@@ -307,4 +307,13 @@ public class Pattern implements Comparable<Pattern> {
         //And we call to the method of abstractionCreator
         return abstractionCreator.isSubpattern(this, p, 0, positions);
     }
+
+    public boolean contains(List<String> itemset){ // @sadjad TODO REFACTOR => our itemset should be a list of items just like elements
+        for (int i = 0; i < elements.size(); i++) {
+            if(itemset.contains(elements.get(i).getItem().toString())){
+                return true;
+            }
+        }
+        return false;
+    }
 }
